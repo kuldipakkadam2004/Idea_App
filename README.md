@@ -12,7 +12,6 @@ Logging with Morgan.
 Tech Stack :
 
 Node.js | Express.js | JavaScript | Morgan
-Installation & Usage: git clone https://github.com/YourUsername/IdeaApp.git cd IdeaApp npm install node server.js
 
 API Endpoints:
 
