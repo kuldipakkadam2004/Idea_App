@@ -1,0 +1,16 @@
+{
+  "name": "ideaapp6",
+  "version": "1.0.0",
+  "description": "This is an idea app",
+  "license": "ISC",
+  "author": "Kuldipak",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "morgan": "^1.10.1"
+  }
+}
