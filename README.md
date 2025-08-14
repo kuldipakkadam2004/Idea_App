@@ -4,13 +4,13 @@ Description : Backend API for managing user-submitted ideas, built with Node.js 
 
 Features :
 
-CRUD operations for ideas.
-Request validation middleware.
-Error handling with proper HTTP codes.
-Modular MVC structure (routes, controllers, models, middleware).
+CRUD operations for ideas. <br>
+Request validation middleware. <br>
+Error handling with proper HTTP codes.<br>
+Modular MVC structure (routes, controllers, models, middleware). <br>
 Logging with Morgan.
+<br>
 Tech Stack :
-
 Node.js | Express.js | JavaScript | Morgan
 
 API Endpoints:
