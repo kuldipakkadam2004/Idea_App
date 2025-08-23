@@ -15,11 +15,10 @@ exports.getAllIdeas = (req,res)=>{
     res.status(200).send(ideas);
 }
 
-//http://localhost:8080/idea_app/v1/ideas/1
-//in the above URO there is 1 we call it path param
+
 
 exports.getIdeaBasedOnId=(req,res)=>{
-    const idea_id=req.params.id; //we are writing this because we want the path param
+    const idea_id=req.params.id; 
 
     if(ideas[idea_id]){ // we are accessing the value of the key by its key
         res.status(200).send(ideas[idea_id]);

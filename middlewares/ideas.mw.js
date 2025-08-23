@@ -34,7 +34,7 @@ exports.validatePUTReqBody=(req,res,next)=>{
         });
     }
 
-    if(req_obj["id"] != req.params.id){
+    if(req_obj["id"] != req.params.id ){
         return res.status(400).send({
             message : `id field in the body dosent match to the id in the param`
         });
