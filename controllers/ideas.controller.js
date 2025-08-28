@@ -4,7 +4,7 @@
 const ideas=require("../models/ideas.model");
 
 (async () =>{
-    let id = await ideas.countDocuments({})
+    let documentCount = await ideas.countDocuments({})
 })();
 
 //controller to fetch all the ideas present in the system
