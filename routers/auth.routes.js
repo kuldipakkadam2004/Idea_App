@@ -1,0 +1,13 @@
+const express = require("express");
+const authController = require("../controllers/auth.controller");
+const userMW= require("../middlewares/users.mw")
+const route = express.Router();
+
+//signup route
+route.post("/auth/signup",userMW.validatePOSTReqBody,authController.signup);
+
+//signin route
+route.post("/auth/signin",userMW.validateSigninpReq,authController.signin);
+
+
+module.exports= route;

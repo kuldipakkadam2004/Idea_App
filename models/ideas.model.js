@@ -2,13 +2,16 @@ const mongoose=require("mongoose");
 
 const ideaSchema=new mongoose.Schema({
     idea_name : {
-        type : String
+        type : String,
+        require : true
     },
     author_name : {
-        type : String
+        type : String,
+        require : true
     },
     idea_description : {
-        type : String
+        type : String,
+        require : true
     }
 
 })

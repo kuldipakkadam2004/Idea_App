@@ -17,6 +17,8 @@ app.use(morgan("dev"));
 const idea_route=require("./routers/ideas.routes");
 app.use("/idea_app/v1",idea_route);
 
+const signup_route = require("./routers/auth.routes")
+app.use("/idea_app/v1",signup_route);
 
 (async ()=>{
     try{

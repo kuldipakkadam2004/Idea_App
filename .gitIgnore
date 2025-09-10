@@ -1,0 +1,54 @@
+# === Node Modules ===
+node_modules/
+
+# === Logs ===
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+log.txt
+
+# === Environment Variables ===
+.env
+.env.local
+.env.*.local
+
+# === Runtime Data ===
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# === OS-Specific Files ===
+.DS_Store
+Thumbs.db
+
+# === Editor/IDE Settings ===
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# === Coverage Reports ===
+coverage/
+*.lcov
+
+# === Build Output ===
+dist/
+build/
+
+# === MongoDB Data Dumps ===
+dump/
+*.gz
+
+# === Misc ===
+*.swp
+*.bak
+*.tmp
+*.log.*
+
+# === Optional Lock Files ===
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
