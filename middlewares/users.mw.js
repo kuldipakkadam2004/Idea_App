@@ -16,6 +16,12 @@ exports.validatePOSTReqBody = async (req,res,next)=>{
             })
         }
 
+        if(! req_obj["role"]){
+            return res.status(400).send({
+                message : "Please enter the role"
+            })
+        }
+
         if(! req_obj["password"]){
             return res.status(400).send({
                 message : "Please enter the password"
@@ -39,7 +45,7 @@ exports.validatePOSTReqBody = async (req,res,next)=>{
 } 
 
 //signin middlware
-exports.validateSigninpReq = async (req,res,next)=>{
+exports.validateSigninReq = async (req,res,next)=>{
     try {
         const user = req.body;
         

@@ -3,15 +3,15 @@ const mongoose=require("mongoose");
 const ideaSchema=new mongoose.Schema({
     idea_name : {
         type : String,
-        require : true
+        required : true
     },
     author_name : {
         type : String,
-        require : true
+        required : true
     },
     idea_description : {
         type : String,
-        require : true
+        required : true
     }
 
 })

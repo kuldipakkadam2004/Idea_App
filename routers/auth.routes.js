@@ -7,7 +7,7 @@ const route = express.Router();
 route.post("/auth/signup",userMW.validatePOSTReqBody,authController.signup);
 
 //signin route
-route.post("/auth/signin",userMW.validateSigninpReq,authController.signin);
+route.post("/auth/signin",userMW.validateSigninReq,authController.signin);
 
 
 module.exports= route;

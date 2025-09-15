@@ -6,7 +6,7 @@ const route=express.Router();
 const idea_controller= require("../controllers/ideas.controller");
 const idea_mw=require("../middlewares/ideas.mw");
 const auth_mw=require("../middlewares/auth.mw");
-
+const checkRole = require("../middlewares/role.mw");
 
 //route to fetch all ideas
 route.get("/ideas",[auth_mw.verifyToken],idea_controller.getAllIdeas);
@@ -23,8 +23,12 @@ route.post("/ideas",[auth_mw.verifyToken,idea_mw.validatePOSTReqBody],idea_contr
 //route for updating the existing Idea
 route.put("/ideas/:id",[auth_mw.verifyToken,idea_mw.validatePUTReqBody],idea_controller.updateIdea);
 
+//route for deleting all Ideas
+route.delete("/ideas/deleteAll",[auth_mw.verifyToken ,checkRole("admin")],idea_controller.deleteAll);
+
 //route for deleting an Idea
-route.delete("/ideas/:id",[auth_mw.verifyToken],idea_controller.deleteIdea);
+route.delete("/ideas/:id",[auth_mw.verifyToken , checkRole("admin")],idea_controller.deleteIdea);
+
 
 
 //exports the router for use in the main app.

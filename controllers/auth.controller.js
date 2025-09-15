@@ -7,6 +7,7 @@ exports.signup = async(req,res)=>{
     const userObj = {
         name : req.body.name,
         email : req.body.email,
+        role : req.body.role,
         password : bcrypt.hashSync(req.body.password,8)
     }
 
@@ -15,6 +16,7 @@ exports.signup = async(req,res)=>{
         const postResponse = {
             name : createdObj.name,
             email : createdObj.email,
+            role : createdObj.role,
             createdAt : createdObj.createdAt
         }
         res.status(201).send(postResponse);
@@ -43,9 +45,11 @@ exports.signin = async (req,res)=>{
             })
         }
         //return the JWT 
-        const token = jwt.sign({id : user._id} , config.secret , {
-            expiresIn : "15m"
-        })
+        const token = jwt.sign(
+            {id : user._id, role : user.role} ,
+            config.secret ,
+            {expiresIn : "15m"}
+        )
 
         return res.status(200).send({
             name : user.name,

@@ -1,33 +1,33 @@
 //2
 //Controller Layer: has functions to interact with that data.
 
-const ideas=require("../models/ideas.model");
+const Idea=require("../models/ideas.model");
 
 (async () =>{
-    let documentCount = await ideas.countDocuments({})
+    let documentCount = await Idea.countDocuments({})
 })();
 
 //controller to fetch all the ideas present in the system
 exports.getAllIdeas = async (req,res)=>{
     try{
-        const allIdeas= await ideas.find(); 
+        const allIdeas= await Idea.find(); 
 
         if(allIdeas.length > 0){
-            res.status(200).send({
+            return res.status(200).send({
                 message : "All Ideas fetched successfully",
                 Ideas : allIdeas,
 
             }); 
         }
         else{
-            res.status(404).send({
+            return res.status(404).send({
                 message : "No ideas found",
                 Ideas : []  
             });
         }
 
     }catch(err){
-        res.status(500).send({
+        return res.status(500).send({
             message : err.message
         })
     }
@@ -39,22 +39,22 @@ exports.getAllIdeas = async (req,res)=>{
 exports.getIdeaBasedOnId= async (req,res)=>{
     try{
         const id = req.params.id;
-        const idea = await ideas.findById(id);
+        const idea = await Idea.findById(id);
 
         if(idea){
-            res.status(200).send({
-                Idea : idea
+            return res.status(200).send({
+                idea : idea
             });
         }
         else{
-            res.status(404).send({
+            return res.status(404).send({
                 message : `Idea with id :  ${id} not found`
             })
         }
     }catch(err){
-        res.status(500).send({
+        return res.status(500).send({
             message : err.message,
-            Idea : "Idea not found"
+            idea : "Idea not found"
         })
     }
 }
@@ -63,15 +63,15 @@ exports.getIdeaBasedOnId= async (req,res)=>{
 exports.createIdea= async (req,res)=>{
     try{
         const idea=req.body;
-        const uploadedIdea = await ideas.create(idea);
-        res.status(201).send({
+        const uploadedIdea = await Idea.create(idea);
+        return res.status(201).send({
             message : "Successfully Idea uploaded",
             uploadedIdea : uploadedIdea
         });
 
 
     }catch(err){
-        res.status(500).send({
+        return res.status(500).send({
             message : err.message || "Failed to upload Idea"
         });
     }
@@ -81,17 +81,17 @@ exports.createIdea= async (req,res)=>{
 exports.updateIdea= async (req,res)=>{
     try{
         const id=req.params.id;
-        const updatedIdea = await ideas.findByIdAndUpdate(
+        const updatedIdea = await Idea.findByIdAndUpdate(
             id,
             req.body,
             {new : true}
         );
-        res.status(200).send({
+        return res.status(200).send({
             message : "Successfully Updated the Idea",
             updatedIdea : updatedIdea
         })
     }catch(err){
-        res.status(400).send({
+        return res.status(400).send({
             message : err.message || "Failed to update the Idea"
         })
     }
@@ -102,26 +102,41 @@ exports.updateIdea= async (req,res)=>{
 exports.deleteIdea= async (req,res)=>{
     try{
         const ideaId=req.params.id;
-        const exists = await ideas.exists({_id : ideaId});
+        const exists = await Idea.exists({_id : ideaId});
 
         if(exists){
-            const deletedIdea=await ideas.findByIdAndDelete(ideaId);
-            res.status(200).send({
+            const deletedIdea=await Idea.findByIdAndDelete(ideaId);
+            return res.status(200).send({
                 message : `Idea with ${ideaId} is deleted`,
                 deletedIdea : deletedIdea
             });
         }
         else{
-            res.status(404).send({
+            return res.status(404).send({
                 message : `Idea with id : ${ideaId} not found`
             });
         }
 
 
     }catch(err){
-        res.status(400).send({
+        return res.status(400).send({
             message : err.message || "Failed to delete the Idea"
         })
     }
 
+}
+
+exports.deleteAll = async (req , res )=>{
+    try{
+        await Idea.deleteMany({});
+        return res.status(200).send({
+            message : "All Ideas have been deleted successfully !"
+        })
+
+    }catch(err){
+        console.log(err.message);
+        return res.status(500).send({
+            message : "Internal server error"
+        })
+    }
 }
