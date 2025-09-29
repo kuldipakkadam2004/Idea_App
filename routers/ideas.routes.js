@@ -1,4 +1,3 @@
-//4
 //Routing Layer: defines the HTTP route /ideas and connects it to the controllers method.
 
 const express = require("express");
@@ -21,7 +20,7 @@ route.post("/ideas",[auth_mw.verifyToken,idea_mw.validatePOSTReqBody],idea_contr
 
 
 //route for updating the existing Idea
-route.put("/ideas/:id",[auth_mw.verifyToken,idea_mw.validatePUTReqBody],idea_controller.updateIdea);
+route.put("/ideas/:id",[auth_mw.verifyToken,idea_mw.validateIdeaId,idea_mw.validatePOSTReqBody],idea_controller.updateIdea);
 
 //route for deleting all Ideas
 route.delete("/ideas/deleteAll",[auth_mw.verifyToken ,checkRole("admin")],idea_controller.deleteAll);

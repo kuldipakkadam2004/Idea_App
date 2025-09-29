@@ -1,7 +1,4 @@
-//5
 // Server file - This is the starting point of the application
- 
-
 const express=require("express");
 const app=express();
 const PORT=9595;

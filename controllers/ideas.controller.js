@@ -1,4 +1,3 @@
-//2
 //Controller Layer: has functions to interact with that data.
 
 const Idea=require("../models/ideas.model");
