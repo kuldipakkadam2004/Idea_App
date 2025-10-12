@@ -45,7 +45,7 @@ exports.validatePOSTReqBody = async (req,res,next)=>{
 } 
 
 //signin middlware
-exports.validateSigninReq = async (req,res,next)=>{
+exports.validateSigninReq = (req,res,next)=>{
     try {
         const user = req.body;
         
@@ -62,8 +62,8 @@ exports.validateSigninReq = async (req,res,next)=>{
 
         next();
     }catch(err){
-        res.status(500).send({
-            message : "Internal server error"
+        res.status(500).json({
+            message : err.message
         })
         console.log(err.message);
     }

@@ -1,7 +1,15 @@
 const userModel = require("../models/user.model");
+const util = require("../utils/jwt")
+const {getRedisClient}= require("../configs/redis")
+const redisClient = getRedisClient();
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const config = require("../configs/auth.config")
+
+const cookieOptions = ()=>({
+    httpOnly : true,
+    secure : false,
+    sameSite : "strict",
+    maxAge : 1*60*60 * 1000
+})
 
 exports.signup = async(req,res)=>{
     const userObj = {
@@ -19,7 +27,7 @@ exports.signup = async(req,res)=>{
             role : createdObj.role,
             createdAt : createdObj.createdAt
         }
-        res.status(201).send(postResponse);
+        res.status(201).json(postResponse);
     }catch(err){
         res.status(500).send({
             message : "Some internal error while inserting document"
@@ -44,30 +52,53 @@ exports.signin = async (req,res)=>{
                 message : "Password is incorrect"
             })
         }
-        //return the JWT 
-        const token = jwt.sign(
-            {id : user._id, role : user.role} ,
-            config.secret ,
-            {expiresIn : "15m"}
-        )
+        const accessToken=util.signinAccessToken({id : user._id , role : user.role});
+        const refreshToken=util.signinRefreshToken({id : user._id , role : user.role});
+        await redisClient.setEx(`refresh_${user._id}` , 7 * 24 * 60 * 60 , refreshToken);
 
-        return res.status(200).send({
+        res.cookie("refreshToken" , refreshToken , cookieOptions());
+        return res.status(200).json({
             name : user.name,
             email : user.email,
-            accessToken : token
+            accessToken : accessToken
         });
     }catch(err){
-        return res.status(500).send({
-            message : "Internal server Error"
+        return res.status(500).json({
+            message : err.message
         })
     }
 }
 
+exports.refresh = async (req,res)=>{
+    try{
+        const token = req.cookies.refreshToken;
+        if(!token){
+            return res.status(401).json({
+                message : "No refresh token"
+            })
+        }
+        let payload ;
+        try{
+            payload = util.verifyRefreshToken(token);
+        }catch(err){
+            return res.status(403).json({
+                message : "Invalid token or expired token"
+            })
+        }
+        const storedToken = await redisClient.get(`refresh_${payload.id}`);
+        if(storedToken != token){
+            return res.status(403).json({
+                message : "Invalid refresh token"
+            })
+        }
 
+        const accessToken = await util.signinAccessToken({id : payload.id , role : payload.role});
+        const refreshToken = await util.signinRefreshToken({id : payload.id , role : payload.role});
+        await redisClient.setEx(`refresh_${payload.id}` , 7*24*60*60 , refreshToken);
 
-/**
- * This number determines how many times bcrypt will hash the password internally, 
- *making the hash more secure (but also more computationally expensive).
-
- * password : bcrypt.hashSync(req,body.password,8)
- */
+        res.cookie("refreshToken",refreshToken,cookieOptions());
+        res.status(200).json({accessToken : accessToken});
+    }catch(err){
+        res.status(500).json({message : err.message})
+    }
+}

@@ -1,17 +1,19 @@
-const jwt=require("jsonwebtoken");
-const config = require("../configs/auth.config");
+const utils = require("../utils/jwt");
 
 const verifyToken=(req,res,next)=>{
-    const token = req.headers["x-access-token"];
-    if(!token){
-        return res.status(403).send({
+    const auth = req.headers.authorization;
+
+    if(!auth || !auth.startsWith("Bearer ")){
+        return res.status(401).json({
             message : "No token provided"
         });
     }
+    const token = auth.split(" ")[1];
     try{
-        const decoded = jwt.verify(token,config.secret);
+        const decoded = utils.verifyAccessToken(token);
         req.user = decoded;
         next();
+        
     }catch(err){
         return res.status(401).send({
             message : "UnAuthorized !"

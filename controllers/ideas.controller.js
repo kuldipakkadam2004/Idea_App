@@ -1,6 +1,9 @@
-//Controller Layer: has functions to interact with that data.
 
 const Idea=require("../models/ideas.model");
+const {getRedisClient} = require("../configs/redis");
+
+
+const redisClient = getRedisClient();
 
 (async () =>{
     let documentCount = await Idea.countDocuments({})
@@ -9,12 +12,19 @@ const Idea=require("../models/ideas.model");
 //controller to fetch all the ideas present in the system
 exports.getAllIdeas = async (req,res)=>{
     try{
-        const allIdeas= await Idea.find(); 
+        const cachedIdeas = await redisClient.get("all_ideas"); 
+        if(cachedIdeas){
+            console.log("Serving from redis cache")
+            return res.status(200).json(JSON.parse(cachedIdeas))
+        }
 
-        if(allIdeas.length > 0){
-            return res.status(200).send({
+        const ideas = await Idea.find();
+        await redisClient.setEx("all_ideas",60,JSON.stringify(ideas));
+
+        if(ideas.length > 0){
+            return res.status(200).json({
                 message : "All Ideas fetched successfully",
-                Ideas : allIdeas,
+                Ideas : ideas,
 
             }); 
         }
@@ -38,20 +48,26 @@ exports.getAllIdeas = async (req,res)=>{
 exports.getIdeaBasedOnId= async (req,res)=>{
     try{
         const id = req.params.id;
-        const idea = await Idea.findById(id);
+        const cachedIdea = await redisClient.get(`idea_${id}`)
+        if(cachedIdea){
+            console.log("Serving from redis cache");
+            return res.status(200).json(JSON.parse(cachedIdea));
+        }
 
+        const idea = await Idea.findById(id);
         if(idea){
-            return res.status(200).send({
+            await redisClient.setEx(`idea_${id}`,60,JSON.stringify(idea));
+            return res.status(200).json({
                 idea : idea
             });
         }
         else{
-            return res.status(404).send({
+            return res.status(404).json({
                 message : `Idea with id :  ${id} not found`
             })
         }
     }catch(err){
-        return res.status(500).send({
+        return res.status(500).json({
             message : err.message,
             idea : "Idea not found"
         })
@@ -63,14 +79,16 @@ exports.createIdea= async (req,res)=>{
     try{
         const idea=req.body;
         const uploadedIdea = await Idea.create(idea);
-        return res.status(201).send({
+        await redisClient.del("all_ideas");
+
+        return res.status(201).json({
             message : "Successfully Idea uploaded",
             uploadedIdea : uploadedIdea
         });
 
 
     }catch(err){
-        return res.status(500).send({
+        return res.status(500).json({
             message : err.message || "Failed to upload Idea"
         });
     }
@@ -85,7 +103,10 @@ exports.updateIdea= async (req,res)=>{
             req.body,
             {new : true}
         );
-        return res.status(200).send({
+        await redisClient.del("all_ideas");
+        await redisClient.del(`idea_${id}`)
+
+        return res.status(200).json({
             message : "Successfully Updated the Idea",
             updatedIdea : updatedIdea
         })
@@ -105,7 +126,10 @@ exports.deleteIdea= async (req,res)=>{
 
         if(exists){
             const deletedIdea=await Idea.findByIdAndDelete(ideaId);
-            return res.status(200).send({
+            await redisClient.del("all_ideas");
+            await redisClient.del(`idea_${ideaId}`);
+
+            return res.status(200).json({
                 message : `Idea with ${ideaId} is deleted`,
                 deletedIdea : deletedIdea
             });
@@ -128,7 +152,8 @@ exports.deleteIdea= async (req,res)=>{
 exports.deleteAll = async (req , res )=>{
     try{
         await Idea.deleteMany({});
-        return res.status(200).send({
+        await redisClient.del("all_ideas");
+        return res.status(200).json({
             message : "All Ideas have been deleted successfully !"
         })
 
