@@ -32,34 +32,6 @@ This application allows users to **submit, view, update, and delete ideas**, wit
 | **Logging** | Morgan |
 | **Environment** | dotenv |
 
----
-
-## 📁 Project Structure
-
-📦 idea-management-system
-├── configs/
-│ ├── db.js
-│ └── redis.js
-├── controllers/
-│ ├── auth.controller.js
-│ └── ideas.controller.js
-├── middlewares/
-│ ├── auth.mw.js
-│ ├── ideas.mw.js
-│ ├── role.mw.js
-│ └── users.mw.js
-├── models/
-│ ├── ideas.model.js
-│ └── user.model.js
-├── routers/
-│ ├── auth.routes.js
-│ └── ideas.routes.js
-├── schema/
-│ └── joi.validation.schema.js
-├── utils/
-│ └── jwt.js
-├── server.js
-└── .env
 
 
  API Endpoints
